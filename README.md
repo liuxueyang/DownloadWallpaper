@@ -18,17 +18,6 @@ Download wallpapers from http://wallpaperscraft.com/
 - The only table in `wallpapers`: wallpaper
 - Table info
 
-+----------------+------------------+------+-----+---------+----------------+
-| Field          | Type             | Null | Key | Default | Extra          |
-+----------------+------------------+------+-----+---------+----------------+
-| id             | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
-| url            | varchar(255)     | NO   | UNI | NULL    |                |
-| filename       | varchar(255)     | NO   |     | NULL    |                |
-| category       | varchar(255)     | NO   |     | NULL    |                |
-| pop_resolution | varchar(255)     | NO   |     | NULL    |                |
-| downloaded     | tinyint(1)       | NO   |     | NULL    |                |
-| filesize       | int(11)          | NO   |     | 0       |                |
-| pageurl        | varchar(255)     | NO   |     |         |                |
-+----------------+------------------+------+-----+---------+----------------+
+![Table info](http://wstaw.org/m/2017/03/17/plasma-desktopJn1799.png)
 
 ![Wallpaper folder](http://wstaw.org/m/2017/03/17/plasma-desktopqj1799.png)
