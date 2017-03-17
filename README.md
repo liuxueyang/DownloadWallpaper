@@ -3,6 +3,11 @@ Download wallpapers from http://wallpaperscraft.com/
 
 ## Notes
 
+## How it works
+
+1. It crawls the URL of those wallpapers and store them into the database.
+2. Download wallpapers using URLS from database and store them to target directory.
+
 ### Some variables to customize
 
 - categories: Those categories you are interested in. It includes all by default.
