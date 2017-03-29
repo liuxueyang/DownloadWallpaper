@@ -16,6 +16,10 @@ import os.path
 import sys
 import subprocess
 
+DATABASE_NAME = 'wallpapers'
+USERNAME = 'repl'
+PASSWORD = 'slackware'
+
 
 class Wallpaper(peewee.Model):
     id = peewee.PrimaryKeyField()
@@ -30,7 +34,7 @@ class Wallpaper(peewee.Model):
 
     class Meta:
         database = peewee.MySQLDatabase(
-            'wallpapers', user='repl', passwd='slackware')
+            DATABASE_NAME, user=USERNAME, passwd=PASSWORD)
 
 
 def handle_exception(url, proxy=None):
