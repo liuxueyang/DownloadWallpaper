@@ -8,6 +8,10 @@
 # Updated: 2017/03/29 15:18:43
 # Fix some bugs. Optimize and refactor code.
 
+# Updated: 2017/03/31 18:04:35
+# Fix bug: the number of page maybe small.
+# Optimize: make the process of crawling urls faster!
+
 import peewee
 from bs4 import BeautifulSoup
 import requests
@@ -15,6 +19,7 @@ import os
 import os.path
 import sys
 import subprocess
+import re
 
 DATABASE_NAME = 'wallpapers'
 USERNAME = 'repl'
@@ -48,36 +53,27 @@ def handle_exception(url, proxy=None):
         return None
 
 
-# TODO: all_pageurls and all_urls??
 def process_div(div, proxy, all_urls, cnt, category, resolution):
     url = 'http:' + div.find('a').get('href')
 
     if url in all_urls:
         return None, None
 
-    rr = handle_exception(url, proxy)
+    u1, u2 = re.split('/download/', url, maxsplit=1)
+    img_url = u1 + '/image/' + re.sub('/', '_', u2) + '.jpg'
+    wallpaper, created = Wallpaper.get_or_create(
+        url=img_url,
+        filename=os.path.basename(img_url),
+        category=category,
+        pop_resolution=resolution,
+        downloaded=False,
+        pageurl=url)
+    cnt += 1
+    print category, cnt, img_url
 
-    if not rr:
-        return None, None
-
-    ss = BeautifulSoup(rr.content, 'html5lib')
-    a_tag = ss.find('a', class_='wd_zoom')
-
-    if a_tag is not None:
-        img_url = a_tag.img.get('src')
-        img_url = 'http:' + img_url
-        wallpaper, created = Wallpaper.get_or_create(
-            url=img_url,
-            filename=os.path.basename(img_url),
-            category=category,
-            pop_resolution=resolution,
-            downloaded=False,
-            pageurl=url)
-        cnt += 1
-        print category, cnt, img_url
-        if created:
-            wallpaper.save()
-            all_urls.append(img_url)
+    if created:
+        wallpaper.save()
+        all_urls.append(img_url)
 
     return all_urls, cnt
 
@@ -130,7 +126,11 @@ def crawl_urls(category, threshold, resolution, use_proxy):
 
     soup = BeautifulSoup(r.content, 'html5lib')
     pages = soup.find('div', class_='pages')
-    pages_num = int(pages.select("a:nth-of-type(5)")[0].string)
+    # Fix bug: maybe the number of pages is small. :(
+    a_s = pages.find_all("a")
+    last_pos = 5 if len(a_s) == 5 else len(a_s)
+    pages_num = int(pages.select("a:nth-of-type(%d)" % last_pos)[0].string)
+
     all_pageurls = [
         wall.pageurl
         for wall in Wallpaper.select()
