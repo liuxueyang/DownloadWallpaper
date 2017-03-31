@@ -49,4 +49,16 @@ python Wallpaper_DB.py 1440x900 2 local --proxy
 
 4. 依赖：`peewee`，`BeautifulSoup`，`requests`，`wget`。如果需要使用代理，需要`proxychains4`。
 
+```
+pip2 install peewee
+pip2 install BeautifulSoup
+pip2 install requests
+```
+
+Slackware Linux可用`sbopkg`安装`wget`，`proxychains4`，`shadowsocks`等。
+
 ![Wallpaper folder](http://wstaw.org/m/2017/03/17/plasma-desktopqj1799.png)
+
+### 更新
+
+在`urls`目录中增加2300张分辨率为`1440x900`的壁纸下载地址，按照类别存放在不同的`*.org`文件里。
