@@ -69,7 +69,7 @@ def process_div(div, proxy, all_urls, cnt, category, resolution):
         downloaded=False,
         pageurl=url)
     cnt += 1
-    print category, cnt, img_url
+    print(category, cnt, img_url)
 
     if created:
         wallpaper.save()
@@ -121,7 +121,7 @@ def crawl_urls(category, threshold, resolution, use_proxy):
     r = handle_exception(main_url, proxy)
 
     if not r:
-        print "Error to get category: ", category
+        print("Error to get category: ", category)
         return
 
     soup = BeautifulSoup(r.content, 'html5lib')
@@ -144,7 +144,7 @@ def crawl_urls(category, threshold, resolution, use_proxy):
 
 def crawl(categories, threshold, resolution, use_proxy):
     for category in categories:
-        print '-' * 20, '{:^12}'.format(category), '-' * 20
+        print('-' * 20, '{:^12}'.format(category), '-' * 20)
         if Wallpaper.select().where(
                 Wallpaper.category == category,
                 Wallpaper.pop_resolution == resolution).count() >= threshold:
@@ -159,9 +159,9 @@ def download_1image(img_url,
                     category,
                     from_db,
                     pic=None):
-    print "\n" + "*" * 20 + "{:^15}".format("Downloading") + "*" * 20
+    print("\n" + "*" * 20 + "{:^15}".format("Downloading") + "*" * 20)
     str_ = "category = {0}\nimg_url = {1}\nimg_name = {2}\ncnt = {3}\n"
-    print str_.format(category, img_url, img_name, cnt + 1)
+    print(str_.format(category, img_url, img_name, cnt + 1))
 
     if use_proxy:
         cmd = ['proxychains4', 'wget', img_url, '-O', img_name]
@@ -194,8 +194,8 @@ def download_from_db(category, resolution, cnt, threshold, dir_path,
             break
         if pic.downloaded:
             cnt += 1
-            print "Already downloaded: {0}, category: {1}\n".format(
-                cnt, category)
+            print("Already downloaded: {0}, category: {1}\n".format(
+                cnt, category))
             continue
 
         _cnt = download_1image(pic.url,
@@ -273,12 +273,12 @@ def log2file(resolution, all_categories):
                 for line in f:
                     exist_urls.append(line.rstrip())
 
-        print category
+        print(category)
 
         with open(file_name, "a+") as f:
             for url in urls:
                 if url not in exist_urls:
-                    print "Add url: ", url
+                    print("Add url: ", url)
                     f.write(url + "\n")
 
 
@@ -293,7 +293,8 @@ def check_argv(categories, all_categories, pop_resolutions):
         sys.exit("ERROR: directory '{0}' not found".format(pictures_dir))
 
     if len(sys.argv) == 2 and sys.argv[1] == "-h":
-        print '''Usage      : python ./Wallpaper_DB.py resolution threshold mode [--proxy]
+        print(
+            '''Usage      : python ./Wallpaper_DB.py resolution threshold mode [--proxy]
              python ./Wallpaper_DB.py resolution --logfile
 
 resolution : {0}
@@ -322,7 +323,7 @@ python Wallpaper_DB.py 1440x900 2 online --proxy
 python Wallpaper_DB.py 1440x900 2 online
 python Wallpaper_DB.py 1440x900 2 local --proxy
 python Wallpaper_DB.py 1440x900 2 local
-python Wallpaper_DB.py 1440x900 --logfile'''.format(pop_resolutions_str)
+python Wallpaper_DB.py 1440x900 --logfile'''.format(pop_resolutions_str))
         sys.exit()
 
     if len(sys.argv) < 3:

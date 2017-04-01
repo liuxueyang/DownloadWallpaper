@@ -47,7 +47,7 @@ python Wallpaper_DB.py 1440x900 2 local
 python Wallpaper_DB.py 1440x900 2 local --proxy
 ```
 
-4. 依赖：`peewee`，`BeautifulSoup`，`requests`，`wget`。如果需要使用代理，需要`proxychains4`。
+4. 依赖：`peewee`，`BeautifulSoup`，`requests`，`wget`。如果需要使用代理，需要`proxychains4`。只支持Python2，不支持Python3。T_T
 
 ```
 pip2 install peewee
