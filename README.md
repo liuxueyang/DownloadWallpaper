@@ -14,7 +14,7 @@ resolution : 1366x768, 1920x1080, 360x640, 1024x768, 1600x900, 1280x900, 1440x90
 
 threshold  : It is a integer which represents the number of wallpapers you want to download for EACH category.
 
-mode       : online or local. online option means the URLS of wallpapers are crawled from the Internet if necessary or read directory from the Database. local option means the URLS of wallpapers is read from local *.org. Note: The *.org files is generated using --logfile option.
+mode       : online or local. online option means the URLS of wallpapers are crawled from the Internet if necessary or read directly from the Database. local option means the URLS of wallpapers is read from local *.org. Note: The *.org files is generated using --logfile option.
 
 --proxy    : If this option is given, the script will use socks5 proxy when downloading wallpapers using wget and proxychains. This option is optional.
 
@@ -34,7 +34,7 @@ python Wallpaper_DB.py 1440x900 --logfile
 ### 说明
 
 1. 在`__main__`里根据自己的需要更改`categories`来指定自己想要爬取的壁纸类别。
-2. 数据库使用MySQL，数据库名称：`wallpapers`，用户名：`repl`，数据库密码：`slackware`，根据自己的需要在程序的开头更改。
+2. 数据库使用MySQL，数据库名称：`wallpapers`，用户名：`repl`，数据库密码：`slackware`，根据需要在程序的开头更改。
 3. 目录`urls`里面已经包含了我爬取的分辨率为`1366x768`的总共10704张壁纸的地址，可以直接使用，在不需要数据库的情况下可以直接下载壁纸（每个类别下载2张）：
 
 ```
@@ -47,15 +47,7 @@ python Wallpaper_DB.py 1440x900 2 local
 python Wallpaper_DB.py 1440x900 2 local --proxy
 ```
 
-4. 依赖：`peewee`，`BeautifulSoup`，`requests`，`wget`。如果需要使用代理，需要`proxychains4`。只支持Python2，不支持Python3。T_T
-
-```
-pip2 install peewee
-pip2 install BeautifulSoup
-pip2 install requests
-```
-
-Slackware Linux可用`sbopkg`安装`wget`，`proxychains4`，`shadowsocks`等。
+4. 依赖：refer to `requirements.txt`。如果需要使用代理，需要`proxychains4`。只支持Python2，不支持Python3。
 
 ![Wallpaper folder](http://wstaw.org/m/2017/03/17/plasma-desktopqj1799.png)
 
@@ -67,6 +59,6 @@ Slackware Linux可用`sbopkg`安装`wget`，`proxychains4`，`shadowsocks`等。
 
 修复一个bug：某个类别的壁纸页数可能很少。
 
-优化爬取地址的逻辑，不必对每张图片都请求一次页面，直接用正则从链接拼出
-图片所在的页面和图片的地址。这样爬取过程就快很多，请求页面的次数等于壁
-纸的「页数」。每页大概有15张壁纸。
+优化爬取地址的逻辑，不必对每张图片都请求一次页面，直接用正则从链接拼出图片所在的
+页面和图片的地址。这样爬取过程就快很多，请求页面的次数等于壁纸的「页数」。每页大
+概有15张壁纸。

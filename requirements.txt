@@ -1,0 +1,12 @@
+beautifulsoup4==4.6.0
+bs4==0.0.1
+certifi==2018.1.18
+chardet==3.0.4
+html5lib==1.0.1
+idna==2.6
+peewee==3.1.5
+PyMySQL==0.8.0
+requests==2.18.4
+six==1.11.0
+urllib3==1.22
+webencodings==0.5.1
