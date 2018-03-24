@@ -161,7 +161,7 @@ def download_1image(img_url,
                     pic=None):
     print("\n" + "*" * 20 + "{:^15}".format("Downloading") + "*" * 20)
     str_ = "category = {0}\nimg_url = {1}\nimg_name = {2}\ncnt = {3}\n"
-    print(str_.format(category, img_url, img_name, cnt + 1))
+    # print(str_.format(category, img_url, img_name, cnt + 1))
 
     if use_proxy:
         cmd = ['proxychains4', 'wget', img_url, '-O', img_name]
