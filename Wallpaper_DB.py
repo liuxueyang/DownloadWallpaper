@@ -20,6 +20,7 @@ import os.path
 import sys
 import subprocess
 import re
+import argparse
 
 DATABASE_NAME = 'wallpapers'
 USERNAME = 'repl'
@@ -160,7 +161,7 @@ def download_1image(img_url,
                     from_db,
                     pic=None):
     print("\n" + "*" * 20 + "{:^15}".format("Downloading") + "*" * 20)
-    str_ = "category = {0}\nimg_url = {1}\nimg_name = {2}\ncnt = {3}\n"
+    # str_ = "category = {0}\nimg_url = {1}\nimg_name = {2}\ncnt = {3}\n"
     # print(str_.format(category, img_url, img_name, cnt + 1))
 
     if use_proxy:
@@ -350,8 +351,20 @@ python Wallpaper_DB.py 1440x900 --logfile'''.format(pop_resolutions_str))
                 resolution, proxyp, False)
 
 
+# if __name__ == '__main__':
+#     Wallpaper.create_table(fail_silently=True)
+
+#     # categories = ['games', 'hi-tech']
+#     categories = all_categories
+#     check_argv(categories, all_categories, pop_resolutions)
+
 if __name__ == '__main__':
-    Wallpaper.create_table(fail_silently=True)
+    all_categories = [
+        '3d', 'anime', 'abstract', 'animals', 'city', 'fantasy', 'flowers',
+        'food', 'games', 'girls', 'hi-tech', 'holidays', 'macro', 'men',
+        'movies', 'music', 'nature', 'other', 'space', 'sport', 'textures',
+        'tv-series', 'vector'
+    ]
 
     pop_resolutions = [
         '1366x768', '1920x1080', '360x640', '1024x768', '1600x900', '1280x900',
@@ -359,12 +372,34 @@ if __name__ == '__main__':
         '320x480', '1920x1200', '480x800', '720x1280'
     ]
 
-    all_categories = [
-        '3d', 'anime', 'abstract', 'animals', 'city', 'fantasy', 'flowers',
-        'food', 'games', 'girls', 'hi-tech', 'holidays', 'macro', 'men',
-        'movies', 'music', 'nature', 'other', 'space', 'sport', 'textures',
-        'tv-series', 'vector'
-    ]
-    # categories = ['games', 'hi-tech']
-    categories = all_categories
-    check_argv(categories, all_categories, pop_resolutions)
+    parser = argparse.ArgumentParser(
+        description='download different types of wallpaper from'
+        ' http://wallpaperscraft.com')
+
+    parser.add_argument(
+        '--resolution',
+        type=str,
+        help='Optional resolutions are: ' + ', '.join(pop_resolutions))
+    parser.add_argument(
+        '--category',
+        nargs='*',
+        help='Optional categories are: ' + ', '.join(all_categories))
+    parser.add_argument(
+        '--num',
+        type=int,
+        default=10,
+        help='count of wallpapers to download for each category')
+    parser.add_argument('--mode', type=str)
+
+    args = parser.parse_args()
+
+    if args.resolution not in pop_resolutions:
+        raise "resolution is not valid"
+
+    if not set(args.category).issubset(set(all_categories)):
+        if args.category[0] != 'all':
+            raise "category is not valid"
+
+    print(args.resolution)
+    print(args.category)
+    print(args.num)
