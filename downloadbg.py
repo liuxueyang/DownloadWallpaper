@@ -12,6 +12,9 @@
 # Fix bug: the number of page maybe small.
 # Optimize: make the process of crawling urls faster!
 
+# Updated: 2018/03/26 22:57:08
+# use argparse to optimize command line interface.
+
 import peewee
 from bs4 import BeautifulSoup
 import requests
@@ -283,82 +286,27 @@ def log2file(resolution, all_categories):
                     f.write(url + "\n")
 
 
-def check_argv(categories, all_categories, pop_resolutions):
-    pop_resolutions_str = ', '.join(
-        pop_resolutions) + ". Please refer to http://wallpaperscraft.com/ for \
- more supported resolution."
-
+def check_argv(all_categories, args):
     pictures_dir = os.path.expanduser("~/Pictures/Wallpapers")
+    categories = all_categories if args.category == ['all'] else args.category
 
     if not os.path.exists(pictures_dir):
-        sys.exit("ERROR: directory '{0}' not found".format(pictures_dir))
+        os.mkdirs(pictures_dir, 0755)
 
-    if len(sys.argv) == 2 and sys.argv[1] == "-h":
-        print(
-            '''Usage      : python ./Wallpaper_DB.py resolution threshold mode [--proxy]
-             python ./Wallpaper_DB.py resolution --logfile
+    if args.log:
+        log2file(resolution, all_categories)
 
-resolution : {0}
+    if args.mode == "online":
+        crawl_main(categories, args.resolution, pictures_dir, args.num, args.proxy)
+    elif args.mode == "local":
+        download_images(
+            os.path.join(pictures_dir, args.resolution), categories, args.num,
+            resolution, args.proxy, False)
 
-threshold  : It is a integer which represents the number of wallpapers you \
-want to download for EACH category.
-
-mode       : online or local. online option means the URLS of wallpapers are \
-crawled from the Internet if necessary or read directory from the \
-Database. local option means the URLS of wallpapers is read from local \
-*.org. Note: The *.org files is generated using --logfile option.
-
---proxy    : If this option is given, the script will use socks5 proxy \
-when downloading wallpapers using wget and proxychains. This option is \
-optional.
-
---logfile : This option will export all of the wallpaper URLs of each \
-category from the database to .org files and save those files into \
-the current directory named `urls`. It assumes your database is not empty.
-
-*Note*: Please update the `categories` variable if necessary. This \
-script will download all of the categories by default.
-
-eg.
-python Wallpaper_DB.py 1440x900 2 online --proxy
-python Wallpaper_DB.py 1440x900 2 online
-python Wallpaper_DB.py 1440x900 2 local --proxy
-python Wallpaper_DB.py 1440x900 2 local
-python Wallpaper_DB.py 1440x900 --logfile'''.format(pop_resolutions_str))
-        sys.exit()
-
-    if len(sys.argv) < 3:
-        sys.exit(
-            "Usage: python ./Wallpaper_DB.py resolution threshold [-proxy]\n" +
-            "Popular resolutions are: " + pop_resolutions_str)
-
-    resolution = sys.argv[1]
-
-    if len(sys.argv) == 3:
-        if (sys.argv[2] == "--logfile"):
-            log2file(resolution, all_categories)
-    elif len(sys.argv) >= 4:
-        proxyp, threshold = None, int(sys.argv[2])
-
-        if len(sys.argv) > 4 and sys.argv[4] == "--proxy":
-            proxyp = True
-
-        if sys.argv[3] == "online":
-            crawl_main(categories, resolution, pictures_dir, threshold, proxyp)
-        elif sys.argv[3] == "local":
-            download_images(
-                os.path.join(pictures_dir, resolution), categories, threshold,
-                resolution, proxyp, False)
-
-
-# if __name__ == '__main__':
-#     Wallpaper.create_table(fail_silently=True)
-
-#     # categories = ['games', 'hi-tech']
-#     categories = all_categories
-#     check_argv(categories, all_categories, pop_resolutions)
 
 if __name__ == '__main__':
+    Wallpaper.create_table(fail_silently=True)
+
     all_categories = [
         '3d', 'anime', 'abstract', 'animals', 'city', 'fantasy', 'flowers',
         'food', 'games', 'girls', 'hi-tech', 'holidays', 'macro', 'men',
@@ -374,7 +322,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
         description='download different types of wallpaper from'
-        ' http://wallpaperscraft.com')
+        ' http://wallpaperscraft.com and save them to directory'
+        ' `~/Pictures/Wallpapers`.')
 
     parser.add_argument(
         '--resolution',
@@ -383,13 +332,30 @@ if __name__ == '__main__':
     parser.add_argument(
         '--category',
         nargs='*',
-        help='Optional categories are: ' + ', '.join(all_categories))
+        help='Optional categories are: ' + ', '.join(all_categories) +
+        '. Default option is: all.',
+        default=['all'])
     parser.add_argument(
         '--num',
         type=int,
         default=10,
-        help='count of wallpapers to download for each category')
-    parser.add_argument('--mode', type=str)
+        help='count of wallpapers to download for each category.')
+    parser.add_argument(
+        '--mode', type=str,
+        choices=['online', 'local'],
+        help='online: crawl urls of wallpapers from'
+        ' http://wallpaperscraft.com or get from database; local: read urls'
+        ' from `org` files in `urls` directory; NOTE: `org` files can be '
+        'generated using `--log` option.')
+    parser.add_argument(
+        '--proxy',
+        action='store_false',
+        help='use proxychains to download or crawl wallpapers urls.')
+    parser.add_argument(
+        '--log',
+        action='store_true',
+        help='export all of the wallpaper urls of specified resolution in'
+        ' database to org files in directory named `urls`')
 
     args = parser.parse_args()
 
@@ -400,6 +366,4 @@ if __name__ == '__main__':
         if args.category[0] != 'all':
             raise "category is not valid"
 
-    print(args.resolution)
-    print(args.category)
-    print(args.num)
+    check_argv(all_categories, args)
