@@ -20,7 +20,6 @@ from bs4 import BeautifulSoup
 import requests
 import os
 import os.path
-import sys
 import subprocess
 import re
 import argparse
@@ -294,14 +293,15 @@ def check_argv(all_categories, args):
         os.mkdirs(pictures_dir, 0755)
 
     if args.log:
-        log2file(resolution, all_categories)
+        log2file(args.resolution, all_categories)
 
     if args.mode == "online":
-        crawl_main(categories, args.resolution, pictures_dir, args.num, args.proxy)
+        crawl_main(categories, args.resolution, pictures_dir, args.num,
+                   args.proxy)
     elif args.mode == "local":
         download_images(
             os.path.join(pictures_dir, args.resolution), categories, args.num,
-            resolution, args.proxy, False)
+            args.resolution, args.proxy, False)
 
 
 if __name__ == '__main__':
