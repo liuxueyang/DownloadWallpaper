@@ -5,49 +5,45 @@
 
 ### 选项
 
-```
-Usage      : python ./Wallpaper_DB.py resolution threshold mode [--proxy]
-             python ./Wallpaper_DB.py resolution --logfile
-	     python ./Wallpaper_DB.py -h
+``` shell
+usage: downloadbg.py [-h] [--resolution RESOLUTION]
+                     [--category [CATEGORY [CATEGORY ...]]] [--num NUM]
+                     [--mode {online,local}] [--proxy] [--log]
 
-resolution : 1366x768, 1920x1080, 360x640, 1024x768, 1600x900, 1280x900, 1440x900, 1280x1024, 800x600, 1680x1050, 2560x1440, 320x480, 1920x1200, 480x800, 720x1280. Please refer to http://wallpaperscraft.com/ for  more supported resolution.
+download different types of wallpaper from http://wallpaperscraft.com and save
+them to directory `~/Pictures/Wallpapers`.
 
-threshold  : It is a integer which represents the number of wallpapers you want to download for EACH category.
-
-mode       : online or local. online option means the URLS of wallpapers are crawled from the Internet if necessary or read directly from the Database. local option means the URLS of wallpapers is read from local *.org. Note: The *.org files is generated using --logfile option.
-
---proxy    : If this option is given, the script will use socks5 proxy when downloading wallpapers using wget and proxychains. This option is optional.
-
---logfile : This option will export all of the wallpaper URLs of each category from the database to .org files and save those files into the current directory named `urls`. It assumes your database is not empty.
-
-*Note*: Please update the `categories` variable if necessary. This script will download all of the categories by default.
-
-eg.
-python Wallpaper_DB.py 1440x900 2 online --proxy
-python Wallpaper_DB.py 1440x900 2 online
-python Wallpaper_DB.py 1440x900 2 local --proxy
-python Wallpaper_DB.py 1440x900 2 local
-python Wallpaper_DB.py 1440x900 --logfile
-
+optional arguments:
+  -h, --help            show this help message and exit
+  --resolution RESOLUTION
+                        Optional resolutions are: 1366x768, 1920x1080,
+                        360x640, 1024x768, 1600x900, 1280x900, 1440x900,
+                        1280x1024, 800x600, 1680x1050, 2560x1440, 320x480,
+                        1920x1200, 480x800, 720x1280
+  --category [CATEGORY [CATEGORY ...]]
+                        Optional categories are: 3d, anime, abstract, animals,
+                        city, fantasy, flowers, food, games, girls, hi-tech,
+                        holidays, macro, men, movies, music, nature, other,
+                        space, sport, textures, tv-series, vector. Default
+                        option is: all.
+  --num NUM             count of wallpapers to download for each category.
+  --mode {online,local}
+                        online: crawl urls of wallpapers from
+                        http://wallpaperscraft.com or get from database;
+                        local: read urls from `org` files in `urls` directory;
+                        NOTE: `org` files can be generated using `--log`
+                        option.
+  --proxy               use proxychains to download or crawl wallpapers urls.
+  --log                 export all of the wallpaper urls of specified
+                        resolution in database to org files in directory named
+                        `urls`
 ```
 
 ### 说明
 
-1. 在`__main__`里根据自己的需要更改`categories`来指定自己想要爬取的壁纸类别。
-2. 数据库使用MySQL，数据库名称：`wallpapers`，用户名：`repl`，数据库密码：`slackware`，根据需要在程序的开头更改。
-3. 目录`urls`里面已经包含了我爬取的分辨率为`1366x768`的总共10704张壁纸的地址，可以直接使用，在不需要数据库的情况下可以直接下载壁纸（每个类别下载2张）：
-
-```
-python Wallpaper_DB.py 1440x900 2 local
-```
-
-或者使用代理：
-
-```
-python Wallpaper_DB.py 1440x900 2 local --proxy
-```
-
-4. 依赖：refer to `requirements.txt`。如果需要使用代理，需要`proxychains4`。只支持Python2，不支持Python3。
+1. 数据库使用MySQL，数据库名称：`wallpapers`，用户名：`repl`，数据库密码：`slackware`，根据需要在程序的开头更改。
+2. 目录`urls`里面已经包含了我爬取的分辨率为`1366x768`的总共10704张壁纸的地址，可在不需要数据库的情况下可以直接下载壁纸。
+3. 依赖：refer to `requirements.txt`。如果需要使用代理，需要`proxychains4`。只支持Python2，不支持Python3。
 
 ![Wallpaper folder](http://wstaw.org/m/2017/03/17/plasma-desktopqj1799.png)
 
@@ -62,3 +58,7 @@ python Wallpaper_DB.py 1440x900 2 local --proxy
 优化爬取地址的逻辑，不必对每张图片都请求一次页面，直接用正则从链接拼出图片所在的
 页面和图片的地址。这样爬取过程就快很多，请求页面的次数等于壁纸的「页数」。每页大
 概有15张壁纸。
+
+#### 2018/03/27
+
+使用 `argparse` 重构命令行接口。
