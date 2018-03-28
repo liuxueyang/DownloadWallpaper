@@ -201,9 +201,8 @@ def download_from_db(category, resolution, cnt, threshold, dir_path,
                 cnt, category))
             continue
 
-        _cnt = download_1image(pic.url,
-                               os.path.join(dir_path, pic.filename), cnt,
-                               use_proxy, category, True, pic)
+        _cnt = download_1image(pic.url, os.path.join(dir_path, pic.filename),
+                               cnt, use_proxy, category, True, pic)
         cnt = _cnt if _cnt else cnt
 
 
@@ -290,7 +289,7 @@ def check_argv(all_categories, args):
     categories = all_categories if args.category == ['all'] else args.category
 
     if not os.path.exists(pictures_dir):
-        os.mkdirs(pictures_dir, 0755)
+        os.makedirs(pictures_dir, 0755)
 
     if args.log:
         log2file(args.resolution, all_categories)
@@ -341,7 +340,8 @@ if __name__ == '__main__':
         default=10,
         help='count of wallpapers to download for each category.')
     parser.add_argument(
-        '--mode', type=str,
+        '--mode',
+        type=str,
         choices=['online', 'local'],
         help='online: crawl urls of wallpapers from'
         ' http://wallpaperscraft.com or get from database; local: read urls'
