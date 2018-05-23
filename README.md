@@ -51,10 +51,10 @@ optional arguments:
 
 Refactor and optimize this script
 
-[ ] add comment for functions
-[ ] add multithread support
-[ ] download files using python library instead of `wget`
-[ ] put database username and password into environment variables
+- [ ] add comment for functions
+- [ ] add multithread support
+- [ ] download files using python library instead of `wget`
+- [ ] put database username and password into environment variables
 
 ### 更新
 
