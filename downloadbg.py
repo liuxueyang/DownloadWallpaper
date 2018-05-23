@@ -131,7 +131,7 @@ def crawl_urls(category, threshold, resolution, use_proxy):
     pages = soup.find('div', class_='pages')
     # Fix bug: maybe the number of pages is small. :(
     a_s = pages.find_all("a")
-    last_pos = 5 if len(a_s) == 5 else len(a_s)
+    last_pos = 5 if len(a_s) >= 5 else len(a_s)
     pages_num = int(pages.select("a:nth-of-type(%d)" % last_pos)[0].string)
 
     all_pageurls = [
