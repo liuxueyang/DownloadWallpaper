@@ -23,6 +23,7 @@ import os.path
 import subprocess
 import re
 import argparse
+import traceback
 
 DATABASE_NAME = 'wallpapers'
 USERNAME = 'repl'
@@ -52,7 +53,9 @@ def handle_exception(url, proxy=None):
         else:
             rr = requests.get(url)
         return rr
-    except:
+    except Exception, e:
+        print('str(e): ', str(e))
+        print('traceback.print_exc():', traceback.print_exc())
         return None
 
 
