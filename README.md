@@ -1,9 +1,10 @@
-下载壁纸
+Download Wallpaper
+
 ==========
 
-壁纸来源：http://wallpaperscraft.com/
+Download Wallpapers from: http://wallpaperscraft.com/
 
-### 选项
+### Help
 
 ``` shell
 usage: downloadbg.py [-h] [--resolution RESOLUTION]
@@ -39,13 +40,11 @@ optional arguments:
                         `urls`
 ```
 
-### 说明
+### About
 
-1. 数据库使用 MySQL， `cp config.sample.json config.json`。
-2. 目录`urls`里面已经包含了我爬取的分辨率为`1366x768`的总共 10704 张壁纸的地址，可在不需要数据库的情况下可以直接下载壁纸。
-3. 依赖：refer to `requirements.txt`。如果需要使用代理，需要`proxychains4`。只支持 Python2，不支持 Python3。
-
-![Wallpaper folder](http://wstaw.org/m/2017/03/17/plasma-desktopqj1799.png)
+1. MySQL Configuration: `cp config.sample.json config.json`.
+2. There are some generated Wallpaper URLs in urls directory.
+3. 如果需要使用代理，需要`proxychains4`。只支持 Python2，不支持 Python3。
 
 ### TODO
 
@@ -56,21 +55,22 @@ Refactor and optimize this script
 - [ ] download files using python library instead of `wget`
 - [X] put database username and password into environment variables
 
-### 更新
+### Updates
 
 #### 2017/03/31
 
-在`urls`目录中增加 2300 张分辨率为`1440x900`的壁纸下载地址，按照类别存放在不同的`*.org`文件里。
+在`urls`目录中增加 2300 张分辨率为`1440x900`的壁纸下载地址，按照类别存
+放在不同的`*.org`文件里。
 
 修复一个 bug：某个类别的壁纸页数可能很少。
 
-优化爬取地址的逻辑，不必对每张图片都请求一次页面，直接用正则从链接拼出图片所在的
-页面和图片的地址。这样爬取过程就快很多，请求页面的次数等于壁纸的「页数」。每页大
-概有 15 张壁纸。
+优化爬取地址的逻辑，不必对每张图片都请求一次页面，直接用正则从链接拼出
+图片所在的页面和图片的地址。这样爬取过程就快很多，请求页面的次数等于壁
+纸的「页数」。每页大概有 15 张壁纸。
 
 #### 2018/03/27
 
-使用 `argparse` 重构命令行接口。
+refactor argument interface using `argparse` package.
 
 #### 2018/12/09
 
