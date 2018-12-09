@@ -77,3 +77,4 @@ refactor argument interface using `argparse` package.
 - Update code according to new site.
 - move database configuration to `config.json` file.
 - update packages in requirements.txt
+- Migrate to Python3
