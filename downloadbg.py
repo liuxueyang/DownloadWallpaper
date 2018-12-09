@@ -62,7 +62,7 @@ def handle_exception(url, proxy=None):
         else:
             rr = requests.get(url)
         return rr
-    except Exception, e:
+    except Exception as e:
         print('str(e): ', str(e))
         print('traceback.print_exc():', traceback.print_exc())
         return None
@@ -307,7 +307,7 @@ def check_argv(all_categories, args):
     categories = all_categories if args.category == ['all'] else args.category
 
     if not os.path.exists(pictures_dir):
-        os.makedirs(pictures_dir, 0755)
+        os.makedirs(pictures_dir, 0o755)
 
     if args.log:
         log2file(args.resolution, all_categories)
