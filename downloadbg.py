@@ -64,23 +64,13 @@ def handle_exception(url, proxy=None):
 
 
 def process_div(div, proxy, all_urls, cnt, category, resolution):
-    # print('div =', div)
     url = div.find('a').get('href')
 
     if url in all_urls:
         return None, None
 
-    # print('url =', url)
-
     u1, u2 = re.split('/download/', url, maxsplit=1)
-
-    # print('u1 =', u1, 'u2 =', u2)
-
     img_url = u1 + '/image/' + re.sub('/', '_', u2) + '.jpg'
-
-    print('img_url =', img_url)
-
-    # exit(0)
 
     wallpaper, created = Wallpaper.get_or_create(
         url=img_url,
@@ -114,7 +104,6 @@ def iterate_pages(pages_num, cnt, threshold, main_url, proxy, category,
             continue
         soup = BeautifulSoup(r.content, 'html5lib')
         divs = soup.find_all('li', class_='wallpapers__item')
-        # print('div')
 
         for div in divs:
             if cnt >= threshold:
