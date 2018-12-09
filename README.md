@@ -76,4 +76,4 @@ Refactor and optimize this script
 
 - Update code according to new site.
 - move database configuration to `config.json` file.
-
+- update packages in requirements.txt
