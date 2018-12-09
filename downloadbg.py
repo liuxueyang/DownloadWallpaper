@@ -24,10 +24,14 @@ import subprocess
 import re
 import argparse
 import traceback
+import json
 
-DATABASE_NAME = 'wallpapers'
-USERNAME = 'repl'
-PASSWORD = 'slackware'
+with open('config.json', 'r') as f:
+    db_config = json.load(f)
+
+DATABASE_NAME = db_config['DATABASE_NAME']
+USERNAME = db_config['USERNAME']
+PASSWORD = db_config['PASSWORD']
 
 
 class Wallpaper(peewee.Model):
@@ -60,13 +64,24 @@ def handle_exception(url, proxy=None):
 
 
 def process_div(div, proxy, all_urls, cnt, category, resolution):
-    url = 'http:' + div.find('a').get('href')
+    # print('div =', div)
+    url = div.find('a').get('href')
 
     if url in all_urls:
         return None, None
 
+    # print('url =', url)
+
     u1, u2 = re.split('/download/', url, maxsplit=1)
+
+    # print('u1 =', u1, 'u2 =', u2)
+
     img_url = u1 + '/image/' + re.sub('/', '_', u2) + '.jpg'
+
+    print('img_url =', img_url)
+
+    # exit(0)
+
     wallpaper, created = Wallpaper.get_or_create(
         url=img_url,
         filename=os.path.basename(img_url),
@@ -98,11 +113,13 @@ def iterate_pages(pages_num, cnt, threshold, main_url, proxy, category,
         if not r:
             continue
         soup = BeautifulSoup(r.content, 'html5lib')
-        divs = soup.find('div', class_='wallpapers')
+        divs = soup.find_all('li', class_='wallpapers__item')
+        # print('div')
 
         for div in divs:
             if cnt >= threshold:
                 break
+
             cnt_ = cnt
             _all_urls, cnt = process_div(div, proxy, all_urls, cnt, category,
                                          resolution)
@@ -122,7 +139,7 @@ def crawl_urls(category, threshold, resolution, use_proxy):
         proxy = None
 
     main_url = 'http://wallpaperscraft.com/catalog/' + category \
-               + '/' + resolution
+        + '/' + resolution
 
     r = handle_exception(main_url, proxy)
 
@@ -131,11 +148,14 @@ def crawl_urls(category, threshold, resolution, use_proxy):
         return
 
     soup = BeautifulSoup(r.content, 'html5lib')
-    pages = soup.find('div', class_='pages')
+    pages = soup.find('div', class_='pager')
     # Fix bug: maybe the number of pages is small. :(
     a_s = pages.find_all("a")
     last_pos = 5 if len(a_s) >= 5 else len(a_s)
-    pages_num = int(pages.select("a:nth-of-type(%d)" % last_pos)[0].string)
+
+    last_link = pages.select("a:nth-of-type(%d)" % last_pos)[0].get('href')
+    page_num = last_link.split('/')[-1][4:]
+    pages_num = int(page_num)
 
     all_pageurls = [
         wall.pageurl
@@ -184,7 +204,7 @@ def download_1image(img_url,
         if from_db:
             pic.downloaded = True
             pic.save()
-        cnt += 1
+            cnt += 1
         return cnt
     else:
         os.remove(img_name)
@@ -204,7 +224,8 @@ def download_from_db(category, resolution, cnt, threshold, dir_path,
                 cnt, category))
             continue
 
-        _cnt = download_1image(pic.url, os.path.join(dir_path, pic.filename),
+        img_url = 'https://images.wallpaperscraft.com' + pic.url
+        _cnt = download_1image(img_url, os.path.join(dir_path, pic.filename),
                                cnt, use_proxy, category, True, pic)
         cnt = _cnt if _cnt else cnt
 
