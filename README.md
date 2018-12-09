@@ -41,9 +41,9 @@ optional arguments:
 
 ### 说明
 
-1. 数据库使用MySQL，数据库名称：`wallpapers`，用户名：`repl`，数据库密码：`slackware`，根据需要在程序的开头更改。
-2. 目录`urls`里面已经包含了我爬取的分辨率为`1366x768`的总共10704张壁纸的地址，可在不需要数据库的情况下可以直接下载壁纸。
-3. 依赖：refer to `requirements.txt`。如果需要使用代理，需要`proxychains4`。只支持Python2，不支持Python3。
+1. 数据库使用 MySQL， `cp config.sample.json config.json`。
+2. 目录`urls`里面已经包含了我爬取的分辨率为`1366x768`的总共 10704 张壁纸的地址，可在不需要数据库的情况下可以直接下载壁纸。
+3. 依赖：refer to `requirements.txt`。如果需要使用代理，需要`proxychains4`。只支持 Python2，不支持 Python3。
 
 ![Wallpaper folder](http://wstaw.org/m/2017/03/17/plasma-desktopqj1799.png)
 
@@ -54,20 +54,26 @@ Refactor and optimize this script
 - [ ] add comment for functions
 - [ ] add multithread support
 - [ ] download files using python library instead of `wget`
-- [ ] put database username and password into environment variables
+- [X] put database username and password into environment variables
 
 ### 更新
 
 #### 2017/03/31
 
-在`urls`目录中增加2300张分辨率为`1440x900`的壁纸下载地址，按照类别存放在不同的`*.org`文件里。
+在`urls`目录中增加 2300 张分辨率为`1440x900`的壁纸下载地址，按照类别存放在不同的`*.org`文件里。
 
-修复一个bug：某个类别的壁纸页数可能很少。
+修复一个 bug：某个类别的壁纸页数可能很少。
 
 优化爬取地址的逻辑，不必对每张图片都请求一次页面，直接用正则从链接拼出图片所在的
 页面和图片的地址。这样爬取过程就快很多，请求页面的次数等于壁纸的「页数」。每页大
-概有15张壁纸。
+概有 15 张壁纸。
 
 #### 2018/03/27
 
 使用 `argparse` 重构命令行接口。
+
+#### 2018/12/09
+
+- Update code according to new site.
+- move database configuration to `config.json` file.
+

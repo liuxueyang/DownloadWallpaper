@@ -15,6 +15,11 @@
 # Updated: 2018/03/26 22:57:08
 # use argparse to optimize command line interface.
 
+# Updated: 2018/12/09 12:10:24
+# - Update code according to new site.
+# - move database configuration to `config.json` file.
+
+
 import peewee
 from bs4 import BeautifulSoup
 import requests
