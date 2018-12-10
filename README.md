@@ -44,7 +44,7 @@ optional arguments:
 
 1. MySQL Configuration: `cp config.sample.json config.json`.
 2. There are some generated Wallpaper URLs in urls directory.
-3. 如果需要使用代理，需要`proxychains4`。
+3. Use socks5 proxy if enabled.
 
 ### TODO
 
@@ -83,3 +83,4 @@ refactor argument interface using `argparse` package.
 
 - use `urllib.request` to download files and `progressbar` to show
   progress.
+- add widgets to progress bar

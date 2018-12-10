@@ -22,6 +22,7 @@
 # Updated: 2018/12/10 11:10:05
 # - use `urllib.request` to download files and `progressbar` to show
 #   progress.
+# - add widgets to progress bar
 
 import peewee
 from bs4 import BeautifulSoup
@@ -184,12 +185,14 @@ def crawl(categories, threshold, resolution, use_proxy):
 
 
 def report_hook(count, block_size, total_size):
+    """
+    this function is used by urllib.request.urlretrieve as a hook
+    """
     global pbar
 
     if count == 0:
         widgets = [Percentage(),
                    ' ', Bar(),
-                   # ' ', ETA(),
                    ' ', AdaptiveETA(),
                    ' ', FileTransferSpeed()]
         pbar = ProgressBar(maxval=total_size / block_size + 1,
@@ -204,7 +207,6 @@ def download_1image(img_url,
                     category,
                     from_db,
                     pic=None):
-    # print("\n" + "*" * 20 + "{:^15}".format("Downloading") + "*" * 20)
     print(img_name)
 
     if use_proxy:
