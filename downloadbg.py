@@ -19,6 +19,9 @@
 # - Update code according to new site.
 # - move database configuration to `config.json` file.
 
+# Updated: 2018/12/10 11:10:05
+# - use `urllib.request` to download files and `progressbar` to show
+#   progress.
 
 import peewee
 from bs4 import BeautifulSoup
@@ -30,6 +33,13 @@ import re
 import argparse
 import traceback
 import json
+from progressbar import ProgressBar
+import sys
+import time
+import urllib
+import urllib.request
+import ssl
+
 
 with open('config.json', 'r') as f:
     db_config = json.load(f)
@@ -172,6 +182,13 @@ def crawl(categories, threshold, resolution, use_proxy):
         crawl_urls(category, threshold, resolution, use_proxy)
 
 
+def report_hook(count, block_size, total_size):
+    global pbar
+    if count == 0:
+        pbar = ProgressBar(maxval=total_size / block_size + 1).start()
+    pbar.update(count)
+
+
 def download_1image(img_url,
                     img_name,
                     cnt,
@@ -180,21 +197,26 @@ def download_1image(img_url,
                     from_db,
                     pic=None):
     print("\n" + "*" * 20 + "{:^15}".format("Downloading") + "*" * 20)
-    # str_ = "category = {0}\nimg_url = {1}\nimg_name = {2}\ncnt = {3}\n"
-    # print(str_.format(category, img_url, img_name, cnt + 1))
+    print(img_name)
 
     if use_proxy:
-        cmd = ['proxychains4', 'wget', img_url, '-O', img_name]
-    else:
-        cmd = ['wget', img_url, '-O', img_name]
+        proxy = urllib.request.ProxyHandler({'https': '127.0.0.1:1087'})
+        opener = urllib.request.build_opener(proxy)
+        urllib.request.install_opener(opener)
 
-    res = subprocess.call(cmd)
+    try:
+        urllib.request.urlretrieve(img_url, img_name, report_hook)
+    except urllib.request.URLError as e:
+        print("Exception")
+
+    pbar.finish()
+
     file_size = os.stat(img_name).st_size
     if from_db:
         pic.filesize = file_size
 
     # remove files whose size is below 90000. It's possibly corrupted.
-    if res == 0 and file_size >= 90000:
+    if file_size >= 90000:
         if from_db:
             pic.downloaded = True
             pic.save()

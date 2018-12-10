@@ -52,7 +52,7 @@ Refactor and optimize this script
 
 - [ ] add comment for functions
 - [ ] add multithread support
-- [ ] download files using python library instead of `wget`
+- [X] download files using python library instead of `wget`
 - [X] put database username and password into environment variables
 
 ### Updates
@@ -78,3 +78,8 @@ refactor argument interface using `argparse` package.
 - move database configuration to `config.json` file.
 - update packages in requirements.txt
 - Migrate to Python3
+
+#### 2018/12/10
+
+- use `urllib.request` to download files and `progressbar` to show
+  progress.
