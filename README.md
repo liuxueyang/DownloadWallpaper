@@ -44,7 +44,7 @@ optional arguments:
 
 1. MySQL Configuration: `cp config.sample.json config.json`.
 2. There are some generated Wallpaper URLs in urls directory.
-3. 如果需要使用代理，需要`proxychains4`。只支持 Python2，不支持 Python3。
+3. 如果需要使用代理，需要`proxychains4`。
 
 ### TODO
 
