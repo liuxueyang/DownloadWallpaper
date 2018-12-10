@@ -33,7 +33,8 @@ import re
 import argparse
 import traceback
 import json
-from progressbar import ProgressBar
+from progressbar import ProgressBar, Bar, ETA, AdaptiveETA, \
+    Percentage, FileTransferSpeed
 import sys
 import time
 import urllib
@@ -184,8 +185,15 @@ def crawl(categories, threshold, resolution, use_proxy):
 
 def report_hook(count, block_size, total_size):
     global pbar
+
     if count == 0:
-        pbar = ProgressBar(maxval=total_size / block_size + 1).start()
+        widgets = [Percentage(),
+                   ' ', Bar(),
+                   # ' ', ETA(),
+                   ' ', AdaptiveETA(),
+                   ' ', FileTransferSpeed()]
+        pbar = ProgressBar(maxval=total_size / block_size + 1,
+                           widgets=widgets).start()
     pbar.update(count)
 
 
@@ -196,7 +204,7 @@ def download_1image(img_url,
                     category,
                     from_db,
                     pic=None):
-    print("\n" + "*" * 20 + "{:^15}".format("Downloading") + "*" * 20)
+    # print("\n" + "*" * 20 + "{:^15}".format("Downloading") + "*" * 20)
     print(img_name)
 
     if use_proxy:
