@@ -92,3 +92,4 @@ venv*
 .DS_Store
 
 config.json
+*~
