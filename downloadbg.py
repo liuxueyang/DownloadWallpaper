@@ -49,6 +49,7 @@ with open('config.json', 'r') as f:
 DATABASE_NAME = db_config['DATABASE_NAME']
 USERNAME = db_config['USERNAME']
 PASSWORD = db_config['PASSWORD']
+PORT = db_config['PORT']
 
 
 class Wallpaper(peewee.Model):
@@ -210,7 +211,7 @@ def download_1image(img_url,
     print(img_name)
 
     if use_proxy:
-        proxy = urllib.request.ProxyHandler({'https': '127.0.0.1:1087'})
+        proxy = urllib.request.ProxyHandler({'https': '127.0.0.1:' + PORT})
         opener = urllib.request.build_opener(proxy)
         urllib.request.install_opener(opener)
 
@@ -400,7 +401,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--proxy',
         action='store_false',
-        help='use proxychains to download or crawl wallpapers urls.')
+        help='use proxy to download or crawl wallpapers urls.')
     parser.add_argument(
         '--log',
         action='store_true',
