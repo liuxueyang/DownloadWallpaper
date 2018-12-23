@@ -1,6 +1,6 @@
 Download Wallpaper
 
-==========
+----
 
 Download Wallpapers from: http://wallpaperscraft.com/
 
@@ -84,3 +84,8 @@ refactor argument interface using `argparse` package.
 - use `urllib.request` to download files and `progressbar` to show
   progress.
 - add widgets to progress bar
+
+#### 2018/12/19
+
+- update requirements.txt
+- move proxy PORT to configuration

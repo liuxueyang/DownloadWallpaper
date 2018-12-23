@@ -1,5 +1,6 @@
 {
     "DATABASE_NAME": "",
     "USERNAME": "",
-    "PASSWORD": ""
+    "PASSWORD": "",
+    "PORT": 1086
 }
