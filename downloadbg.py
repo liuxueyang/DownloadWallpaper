@@ -49,10 +49,10 @@ PORT = db_config['PORT']
 class Wallpaper(peewee.Model):
     id = peewee.PrimaryKeyField()
     url = peewee.CharField(unique=True)
-    # pageurl is the webpage which contains the picture
-    pageurl = peewee.CharField(default="")
+    # page_url is the web page which contains the picture
+    page_url = peewee.CharField(default="")
     filename = peewee.CharField()
-    filesize = peewee.IntegerField(default=0)
+    file_size = peewee.IntegerField(default=0)
     category = peewee.CharField()
     pop_resolution = peewee.CharField()
     downloaded = peewee.BooleanField()
@@ -157,15 +157,15 @@ def crawl_urls(category, threshold, resolution, use_proxy):
     page_num = last_link.split('/')[-1][4:]
     pages_num = int(page_num)
 
-    all_pageurls = [
+    all_page_urls = [
         wall.pageurl
         for wall in Wallpaper.select()
             .where(Wallpaper.category == category, Wallpaper.pop_resolution ==
                    resolution)
     ]
-    cnt = len(all_pageurls)
+    cnt = len(all_page_urls)
     iterate_pages(pages_num, cnt, threshold, main_url, proxy, category,
-                  all_pageurls, resolution)
+                  all_page_urls, resolution)
 
 
 def crawl(categories, threshold, resolution, use_proxy):
@@ -182,16 +182,16 @@ def report_hook(count, block_size, total_size):
     """
     this function is used by urllib.request.urlretrieve as a hook
     """
-    global pbar
+    global p_bar
 
     if count == 0:
         widgets = [Percentage(),
                    ' ', Bar(),
                    ' ', AdaptiveETA(),
                    ' ', FileTransferSpeed()]
-        pbar = ProgressBar(maxval=total_size / block_size + 1,
-                           widgets=widgets).start()
-    pbar.update(count)
+        p_bar = ProgressBar(maxval=total_size / block_size + 1,
+                            widgets=widgets).start()
+    p_bar.update(count)
 
 
 def download_1image(img_url,
@@ -212,11 +212,11 @@ def download_1image(img_url,
     except urllib.request.URLError as e:
         print("Exception:", e)
 
-    pbar.finish()
+    p_bar.finish()
 
     file_size = os.stat(img_name).st_size
     if from_db:
-        pic.filesize = file_size
+        pic.file_size = file_size
 
     # remove files whose size is below 90000. It's possibly corrupted.
     if file_size >= 90000:
