@@ -93,3 +93,4 @@ venv*
 
 config.json
 *~
+.idea/
