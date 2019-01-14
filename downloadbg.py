@@ -29,19 +29,13 @@ from bs4 import BeautifulSoup
 import requests
 import os
 import os.path
-import subprocess
 import re
 import argparse
 import traceback
 import json
-from progressbar import ProgressBar, Bar, ETA, AdaptiveETA, \
-    Percentage, FileTransferSpeed
-import sys
-import time
+from progressbar import ProgressBar, Bar, AdaptiveETA, Percentage, FileTransferSpeed
 import urllib
 import urllib.request
-import ssl
-
 
 with open('config.json', 'r') as f:
     db_config = json.load(f)
@@ -81,7 +75,7 @@ def handle_exception(url, proxy=None):
         return None
 
 
-def process_div(div, proxy, all_urls, cnt, category, resolution):
+def process_div(div, all_urls, cnt, category, resolution):
     url = div.find('a').get('href')
 
     if url in all_urls:
@@ -128,8 +122,7 @@ def iterate_pages(pages_num, cnt, threshold, main_url, proxy, category,
                 break
 
             cnt_ = cnt
-            _all_urls, cnt = process_div(div, proxy, all_urls, cnt, category,
-                                         resolution)
+            _all_urls, cnt = process_div(div, all_urls, cnt, category, resolution)
             cnt = cnt_ if not cnt else cnt
             all_urls = _all_urls if _all_urls else all_urls
 
@@ -146,7 +139,7 @@ def crawl_urls(category, threshold, resolution, use_proxy):
         proxy = None
 
     main_url = 'http://wallpaperscraft.com/catalog/' + category \
-        + '/' + resolution
+               + '/' + resolution
 
     r = handle_exception(main_url, proxy)
 
@@ -167,8 +160,8 @@ def crawl_urls(category, threshold, resolution, use_proxy):
     all_pageurls = [
         wall.pageurl
         for wall in Wallpaper.select()
-        .where(Wallpaper.category == category, Wallpaper.pop_resolution ==
-               resolution)
+            .where(Wallpaper.category == category, Wallpaper.pop_resolution ==
+                   resolution)
     ]
     cnt = len(all_pageurls)
     iterate_pages(pages_num, cnt, threshold, main_url, proxy, category,
@@ -205,7 +198,6 @@ def download_1image(img_url,
                     img_name,
                     cnt,
                     use_proxy,
-                    category,
                     from_db,
                     pic=None):
     print(img_name)
@@ -218,7 +210,7 @@ def download_1image(img_url,
     try:
         urllib.request.urlretrieve(img_url, img_name, report_hook)
     except urllib.request.URLError as e:
-        print("Exception")
+        print("Exception:", e)
 
     pbar.finish()
 
@@ -253,7 +245,7 @@ def download_from_db(category, resolution, cnt, threshold, dir_path,
 
         img_url = 'https://images.wallpaperscraft.com' + pic.url
         _cnt = download_1image(img_url, os.path.join(dir_path, pic.filename),
-                               cnt, use_proxy, category, True, pic)
+                               cnt, use_proxy, True, pic)
         cnt = _cnt if _cnt else cnt
 
 
@@ -262,20 +254,20 @@ def download_from_org(category, resolution, cnt, threshold, dir_path,
     path = os.path.join(os.getcwd(), "urls", resolution)
 
     if not os.path.exists(path):
-        os.exit("Directory not found: " + path)
+        raise Exception("Directory not found: " + path)
 
     file_name = os.path.join(path, category + ".org")
 
     if os.path.exists(file_name):
-        with open(file_name, "r") as f:
-            for line in f:
+        with open(file_name, "r") as fh:
+            for line in fh:
                 if cnt >= threshold:
                     break
                 url = line.rstrip()
                 _cnt = download_1image(url,
                                        os.path.join(dir_path,
                                                     os.path.basename(url)),
-                                       cnt, use_proxy, category, False)
+                                       cnt, use_proxy, False)
                 cnt = _cnt if _cnt else cnt
 
 
@@ -307,51 +299,51 @@ def crawl_main(categories, resolution, pictures_dir, threshold, proxyp):
 
 
 # export all picture urls to .org text file
-def log2file(resolution, all_categories):
+def log2file(resolution, all_categories_):
     path = os.path.join(os.getcwd(), "urls", resolution)
     if not os.path.exists(path):
         os.makedirs(path)
-    for category in all_categories:
+    for category in all_categories_:
         file_name = os.path.join(path, category + ".org")
         urls = [
             wall.url
             for wall in Wallpaper.select()
-            .where(Wallpaper.category == category, Wallpaper.pop_resolution ==
-                   resolution)
+                .where(Wallpaper.category == category, Wallpaper.pop_resolution ==
+                       resolution)
         ]
         exist_urls = []
 
         if os.path.exists(file_name):
-            with open(file_name, "r") as f:
-                for line in f:
+            with open(file_name, "r") as fh:
+                for line in fh:
                     exist_urls.append(line.rstrip())
 
         print(category)
 
-        with open(file_name, "a+") as f:
+        with open(file_name, "a+") as fh:
             for url in urls:
                 if url not in exist_urls:
                     print("Add url: ", url)
-                    f.write(url + "\n")
+                    fh.write(url + "\n")
 
 
-def check_argv(all_categories, args):
+def check_argv(all_categories_, args_):
     pictures_dir = os.path.expanduser("~/Pictures/Wallpapers")
-    categories = all_categories if args.category == ['all'] else args.category
+    categories = all_categories_ if args_.category == ['all'] else args_.category
 
     if not os.path.exists(pictures_dir):
         os.makedirs(pictures_dir, 0o755)
 
-    if args.log:
-        log2file(args.resolution, all_categories)
+    if args_.log:
+        log2file(args_.resolution, all_categories_)
 
-    if args.mode == "online":
-        crawl_main(categories, args.resolution, pictures_dir, args.num,
-                   args.proxy)
-    elif args.mode == "local":
+    if args_.mode == "online":
+        crawl_main(categories, args_.resolution, pictures_dir, args_.num,
+                   args_.proxy)
+    elif args_.mode == "local":
         download_images(
-            os.path.join(pictures_dir, args.resolution), categories, args.num,
-            args.resolution, args.proxy, False)
+            os.path.join(pictures_dir, args_.resolution), categories, args_.num,
+            args_.resolution, args_.proxy, False)
 
 
 if __name__ == '__main__':
@@ -372,8 +364,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
         description='download different types of wallpaper from'
-        ' http://wallpaperscraft.com and save them to directory'
-        ' `~/Pictures/Wallpapers`.')
+                    ' http://wallpaperscraft.com and save them to directory'
+                    ' `~/Pictures/Wallpapers`.')
 
     parser.add_argument(
         '--resolution',
@@ -383,7 +375,7 @@ if __name__ == '__main__':
         '--category',
         nargs='*',
         help='Optional categories are: ' + ', '.join(all_categories) +
-        '. Default option is: all.',
+             '. Default option is: all.',
         default=['all'])
     parser.add_argument(
         '--num',
@@ -395,9 +387,9 @@ if __name__ == '__main__':
         type=str,
         choices=['online', 'local'],
         help='online: crawl urls of wallpapers from'
-        ' http://wallpaperscraft.com or get from database; local: read urls'
-        ' from `org` files in `urls` directory; NOTE: `org` files can be '
-        'generated using `--log` option.')
+             ' http://wallpaperscraft.com or get from database; local: read urls'
+             ' from `org` files in `urls` directory; NOTE: `org` files can be '
+             'generated using `--log` option.')
     parser.add_argument(
         '--proxy',
         action='store_false',
@@ -406,15 +398,15 @@ if __name__ == '__main__':
         '--log',
         action='store_true',
         help='export all of the wallpaper urls of specified resolution in'
-        ' database to org files in directory named `urls`')
+             ' database to org files in directory named `urls`')
 
     args = parser.parse_args()
 
     if args.resolution not in pop_resolutions:
-        raise "resolution is not valid"
+        raise Exception("resolution is not valid")
 
     if not set(args.category).issubset(set(all_categories)):
         if args.category[0] != 'all':
-            raise "category is not valid"
+            raise Exception("category is not valid")
 
     check_argv(all_categories, args)
