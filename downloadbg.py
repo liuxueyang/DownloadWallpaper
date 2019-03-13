@@ -90,7 +90,7 @@ def process_div(div, all_urls, cnt, category, resolution):
         category=category,
         pop_resolution=resolution,
         downloaded=False,
-        pageurl=url)
+        page_url=url)
     cnt += 1
     print(category, cnt, img_url)
 
@@ -288,14 +288,14 @@ def download_images(path, categories, threshold, resolution, use_proxy,
                               use_proxy)
 
 
-def crawl_main(categories, resolution, pictures_dir, threshold, proxyp):
+def crawl_main(categories, resolution, pictures_dir, threshold, proxy_p):
     path = os.path.join(pictures_dir, resolution)
 
     if not os.path.exists(path):
         os.makedirs(path)
 
-    crawl(categories, threshold, resolution, proxyp)
-    download_images(path, categories, threshold, resolution, proxyp, True)
+    crawl(categories, threshold, resolution, proxy_p)
+    download_images(path, categories, threshold, resolution, proxy_p, True)
 
 
 # export all picture urls to .org text file
@@ -359,7 +359,7 @@ if __name__ == '__main__':
     pop_resolutions = [
         '1366x768', '1920x1080', '360x640', '1024x768', '1600x900', '1280x900',
         '1440x900', '1280x1024', '800x600', '1680x1050', '2560x1440',
-        '320x480', '1920x1200', '480x800', '720x1280'
+        '320x480', '1920x1200', '480x800', '720x1280', '2560x1600',
     ]
 
     parser = argparse.ArgumentParser(
@@ -392,7 +392,7 @@ if __name__ == '__main__':
              'generated using `--log` option.')
     parser.add_argument(
         '--proxy',
-        action='store_false',
+        action='store_true',
         help='use proxy to download or crawl wallpapers urls.')
     parser.add_argument(
         '--log',

@@ -89,3 +89,8 @@ refactor argument interface using `argparse` package.
 
 - update requirements.txt
 - move proxy PORT to configuration
+
+#### 2019/03/13
+
+- set proxy option default to be false
+- fix bug: rename page_url field
