@@ -46,6 +46,12 @@ optional arguments:
 2. There are some generated Wallpaper URLs in urls directory.
 3. Use socks5 proxy if enabled.
 
+### Example
+
+``` bash
+python downloadbg.py --resolution 1920x1080 --category textures --num 20 --mode online
+```
+
 ### TODO
 
 Refactor and optimize this script
